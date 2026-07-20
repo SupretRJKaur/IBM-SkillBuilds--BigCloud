@@ -1,0 +1,122 @@
+{
+  "name": "SortIt - Waste Classification Workflow (Free - Gemini)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sortit-scan",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-node",
+      "name": "Webhook - Receive Scan",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "sortit-scan"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  contents: [\n    {\n      parts: [\n        { text: \"You are SortIt, a waste segregation vision assistant for a kiosk. Classify the item shown in the photo using EXACTLY these four dataset categories (matching the project's training data folders), then break the item into its separable physical components. CATEGORY -> BIN RULES: HAZARDOUS (batteries, chemicals, sharp objects, e-waste, aerosol cans) -> bin RED. MEDICAL (syringes, bandages, medicine blister packs, masks, gloves) -> bin YELLOW. RECYCLABLE (cardboard, glass, metal, paper, plastic - bottles, cans, jars, wrappers, containers) -> bin BLUE. BIODEGRADABLE (food-soiled cardboard/paper, food scraps, organic waste) -> bin GREEN. For composite items (e.g. a tetra pack = cardboard body + plastic straw + plastic cap; a bottle = plastic/glass body + cap + label), list EACH component separately with its own bin. Respond ONLY with valid JSON, no markdown fences, no extra commentary, in exactly this shape: {\\\"item_name\\\": string, \\\"components\\\": [{\\\"part\\\": string, \\\"material\\\": string, \\\"bin\\\": \\\"red\\\"|\\\"yellow\\\"|\\\"blue\\\"|\\\"green\\\", \\\"reason\\\": string}]}\" },\n        {\n          inline_data: {\n            mime_type: \"image/jpeg\",\n            data: $json.body.image.replace(/^data:image\\/\\w+;base64,/, '')\n          }\n        }\n      ]\n    }\n  ],\n  generationConfig: { temperature: 0.2, maxOutputTokens: 500 }\n}) }}",
+        "options": {}
+      },
+      "id": "gemini-vision-node",
+      "name": "Gemini Vision - Classify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        300
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "gemini-api-key",
+          "name": "Gemini API Key (query param: key)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\nlet raw = '';\ntry {\n  raw = res.candidates[0].content.parts[0].text;\n} catch (e) {\n  return [{ json: { item_name: 'Unknown item', components: [], error: 'No response from Gemini' } }];\n}\nlet cleaned = raw.replace(/```json/g, '').replace(/```/g, '').trim();\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = { item_name: 'Unknown item', components: [], error: 'Could not parse model response' };\n}\nreturn [{ json: parsed }];"
+      },
+      "id": "parse-node",
+      "name": "Parse AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-node",
+      "name": "Respond to Frontend",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        950,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Receive Scan": {
+      "main": [
+        [
+          {
+            "node": "Gemini Vision - Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Vision - Classify": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Frontend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

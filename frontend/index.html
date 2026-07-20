@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>SortIt</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { background: #0f172a; color: white; height: 100vh; overflow: hidden; }
+  .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; }
+  h1 { font-size: 2.5rem; margin-bottom: 10px; }
+  .tagline { color: #94a3b8; margin-bottom: 20px; font-size: 1.1rem; }
+  #video, #canvas { border-radius: 16px; max-width: 480px; width: 90%; border: 4px solid #334155; }
+  #canvas { display: none; }
+  #scanBtn { margin-top: 20px; padding: 16px 48px; font-size: 1.3rem; border: none; border-radius: 12px;
+             background: #22c55e; color: white; cursor: pointer; font-weight: bold; }
+  #scanBtn:disabled { background: #64748b; }
+  #result { margin-top: 25px; width: 90%; max-width: 480px; }
+  .component-card { display: flex; justify-content: space-between; align-items: center;
+                    background: #1e293b; padding: 14px 20px; border-radius: 10px; margin-bottom: 10px; }
+  .bin-tag { padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+  .bin-red { background: #ef4444; }
+  .bin-yellow { background: #eab308; color: #1e293b; }
+  .bin-blue { background: #3b82f6; }
+  .bin-green { background: #22c55e; }
+  .loading { color: #94a3b8; margin-top: 20px; }
+  .item-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>♻️ SortIt</h1>
+  <p class="tagline">Hold, Scan, Discard.</p>
+
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas"></canvas>
+
+  <button id="scanBtn">📷 Scan Item</button>
+
+  <div id="loading" class="loading" style="display:none;">Scanning... please wait</div>
+  <div id="result"></div>
+</div>
+
+<script>
+  // >>> PASTE YOUR ACTIVE N8N PRODUCTION WEBHOOK URL HERE <<<
+  const N8N_WEBHOOK_URL = "https://sort-it.app.n8n.cloud/webhook/sortit-scan";
+
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const scanBtn = document.getElementById('scanBtn');
+  const loading = document.getElementById('loading');
+  const resultDiv = document.getElementById('result');
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    .then(stream => { video.srcObject = stream; })
+    .catch(err => {
+      resultDiv.innerHTML = `<p style="color:#ef4444;">Camera access failed: ${err.message}</p>`;
+    });
+
+  scanBtn.addEventListener('click', async () => {
+    scanBtn.disabled = true;
+    loading.style.with = 'block';
+    loading.style.display = 'block';
+    resultDiv.innerHTML = '';
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const imageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+    try {
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageBase64 })
+      });
+      const data = await response.json();
+      renderResult(data);
+    } catch (err) {
+      resultDiv.innerHTML = `<p style="color:#ef4444;">Error: could not reach classification service.</p>`;
+    } finally {
+      loading.style.display = 'none';
+      scanBtn.disabled = false;
+    }
+  });
+
+  function renderResult(data) {
+    if (!data.components || data.components.length === 0) {
+      resultDiv.innerHTML = `<p>Could not identify the item. Please try again with better lighting.</p>`;
+      return;
+    }
+
+    let html = `<div class="item-name">${data.item_name || 'Detected Item'}</div>`;
+    data.components.forEach(comp => {
+      html += `
+        <div class="component-card">
+          <div>
+            <div><strong>${comp.part}</strong></div>
+            <div style="color:#94a3b8; font-size:0.85rem;">${comp.material} — ${comp.reason || ''}</div>
+          </div>
+          <div class="bin-tag bin-${comp.bin}">${comp.bin.toUpperCase()} BIN</div>
+        </div>`;
+    });
+    resultDiv.innerHTML = html;
+  }
+</script>
+</body>
+</html>
