@@ -1,114 +1,347 @@
-```markdown
-# ♻️ SortIt — AI-Powered Waste Kiosk
+````markdown
+# ♻️ SortIt — AI-Powered Waste Classification Kiosk
 
-SortIt is an intelligent, cloud-native waste classification kiosk system designed to streamline recycling and eco-friendly disposal. Using a high-efficiency cloud orchestration pipeline and advanced Vision AI, SortIt captures items via a front-facing camera, analyzes their material composition, and visually maps each part to its corresponding designated waste bin in real time.
+> **SortIt** is an intelligent, cloud-native waste classification kiosk that uses **Google Gemini Vision AI** to identify waste materials and recommend the correct disposal bin in real time. Built on a **fully serverless architecture**, the system requires no backend hosting or local server management after deployment.
 
 ---
 
-## 🏗️ System Architecture & Workflow
+# 🌍 Overview
 
-The application operates on a completely serverless, decoupled cloud-native architecture. Once deployed, it requires zero local terminal interaction or active server management:
+SortIt helps improve waste segregation by combining computer vision, cloud automation, and AI-powered classification. A user simply places an item in front of the kiosk camera, and the system analyzes it, detects individual components, and recommends the appropriate waste bin for each detected material.
+
+The entire processing pipeline runs on cloud services, making the solution lightweight, scalable, and easy to deploy.
+
+---
+
+# ✨ Features
+
+- 📷 Camera-based real-time waste scanning
+- 🤖 Google Gemini 2.0 Flash Vision AI integration
+- ☁️ Fully serverless cloud architecture
+- 🔄 n8n cloud workflow orchestration
+- 🌐 Vercel frontend deployment
+- 🧩 Multi-component object analysis
+- 🗂️ Material-wise waste segregation
+- ⚡ Zero backend server maintenance
+- 📱 Responsive kiosk interface
+- 🌱 Designed for SDG 12 (Responsible Consumption and Production)
+
+---
+
+# 🏗️ System Architecture
 
 ```text
-[Camera/Screen - Vercel Frontend]
-         |  (Captures frame, converts to Base64 JSON payload)
-         v
-[n8n Webhook Engine - Always-On Cloud Workflow]
-         |  (Payload forwarding & prompt routing)
-         v
-[Google Gemini 2.0 Flash AI]
-         |  (Visual processing & multi-component JSON classification)
-         v
-[Vercel UI Render] ---> Displays: Component Part ➡️ Assigned Bin Color
-
+                     +---------------------------+
+                     |   Camera / Browser UI     |
+                     |     (Vercel Frontend)     |
+                     +-------------+-------------+
+                                   |
+                                   | Capture Image
+                                   | Convert to Base64
+                                   v
+                     +---------------------------+
+                     |     n8n Cloud Webhook     |
+                     |  Workflow Orchestration   |
+                     +-------------+-------------+
+                                   |
+                                   | Prompt Routing
+                                   v
+                     +---------------------------+
+                     | Google Gemini 2.0 Flash   |
+                     |      Vision AI Model      |
+                     +-------------+-------------+
+                                   |
+                                   | JSON Response
+                                   v
+                     +---------------------------+
+                     |      Vercel Frontend      |
+                     | Displays Component → Bin  |
+                     +---------------------------+
 ```
 
 ---
 
-## 📁 Repository Structure
+# 🔄 Workflow
 
-The project separates the user interface layout from the backend orchestration layer:
+1. User places an object in front of the kiosk camera.
+2. The frontend captures an image.
+3. The image is converted into a Base64 payload.
+4. The payload is sent to an n8n webhook.
+5. n8n forwards the request to Google Gemini Vision.
+6. Gemini identifies every visible material/component.
+7. Gemini returns structured JSON.
+8. The frontend displays the recommended waste bin for every detected component.
+
+---
+
+# 📁 Project Structure
 
 ```text
 sortit/
-├── n8n-workflow/
-│   └── sortit-workflow.json     # Importable backend blueprint for n8n Cloud
+│
 ├── frontend/
-│   ├── index.html               # Responsive Kiosk User Interface & Camera Handler
-│   └── vercel.json              # Vercel deployment routing configuration
-└── README.md                    # Project documentation
-
+│   ├── index.html
+│   └── vercel.json
+│
+├── n8n-workflow/
+│   └── sortit-workflow.json
+│
+├── README.md
+│
+└── data/                 (Ignored via .gitignore)
 ```
 
-> ⚠️ **Dataset Architecture Note:** The full local project footprint includes a structural dataset directory (`data/`) encompassing over 5,000+ high-density reference images across multiple waste classes. To comply with modern cloud engineering practices, bypass GitHub remote file-size limitations, and keep the production branch optimized, this training layer is safely excluded via `.gitignore`. Real-time classification is completely handled live on the cloud.
+### Folder Description
+
+| Folder | Purpose |
+|----------|----------|
+| **frontend/** | User interface, camera capture, API communication |
+| **n8n-workflow/** | Importable cloud workflow |
+| **README.md** | Documentation |
+| **data/** | Local reference dataset (excluded from GitHub) |
 
 ---
 
-## 🧠 Core Classification Matrix
+# 📂 Dataset Information
 
-The classification engine maps visual components directly to four rigid bin colors based on the foundational categories established by the project framework:
+The development version of SortIt contains a local dataset consisting of **5,000+ reference images** covering multiple waste categories.
 
-| Dataset Category | Target Material Sub-classes | Designated Kiosk Bin Mapping |
-| --- | --- | --- |
-| **`hazardous/`** | Chemicals, batteries, electronic waste components | 🔴 **Red Bin** |
-| **`medical/`** | Bio-hazards, clinical materials, medical packaging | 🟡 **Yellow Bin** |
-| **`recyclable/`** | Cardboard, glass, metal, paper, plastic composites | 🔵 **Blue Bin** |
-| **`biodegradable/`** | Organic items, degradable cardboard, pure paper products | 🟢 **Green Bin** |
+To keep the repository lightweight and comply with GitHub storage limitations, the dataset is excluded using `.gitignore`.
+
+```text
+data/
+├── hazardous/
+├── medical/
+├── recyclable/
+└── biodegradable/
+```
+
+The deployed application **does not require the dataset** because classification is performed live using **Google Gemini Vision AI**.
 
 ---
 
-## 🚀 Deployment Steps
+# 🧠 Waste Classification Matrix
 
-### Step 1 — Get a Free Gemini API Key
+| Dataset Category | Example Materials | Assigned Bin |
+|-----------------|------------------|--------------|
+| **hazardous/** | Batteries, chemicals, electronic waste | 🔴 Red Bin |
+| **medical/** | Medical packaging, biohazard waste, clinical items | 🟡 Yellow Bin |
+| **recyclable/** | Plastic, glass, cardboard, metal, paper | 🔵 Blue Bin |
+| **biodegradable/** | Organic waste, biodegradable paper, food waste | 🟢 Green Bin |
 
-1. Go to [Google AI Studio Key Generator](https://aistudio.google.com/apikey) and sign in with a Google account.
-2. Click **Create API Key** and copy it safely. Gemini's free tier (15 requests/minute, 1,500 requests/day) handles standard kiosk traffic beautifully without credit card requirements.
+---
 
-### Step 2 — Set up the n8n Cloud Orchestration Brain
+# 🚀 Deployment Guide
 
-1. Sign up on [n8n Cloud](https://n8n.io).
-2. Click **Import from File** on your dashboard and upload `n8n-workflow/sortit-workflow.json`.
-3. Open the **Gemini Vision - Classify** node ➡️ under *Credentials*, add a new **Query Auth** item:
-* **Name:** `key`
-* **Value:** *[Your copied Gemini API Key]*
+## Step 1 — Generate a Gemini API Key
 
+Visit:
 
-4. Toggle the workflow status switch in the top-right corner to **Active / Published**.
-5. Open the **Webhook** node and copy the **Production URL** (e.g., `https://yourname.app.n8n.cloud/webhook/sortit-scan`).
+https://aistudio.google.com/apikey
 
-### Step 3 — Deploy the Frontend to Vercel
+1. Sign in using a Google account.
+2. Click **Create API Key**.
+3. Copy and securely store the generated key.
 
-1. Open `frontend/index.html` and update the global webhook connection string with your live production URL:
+The free tier provides:
+
+- 15 requests per minute
+- 1,500 requests per day
+
+which is sufficient for typical kiosk usage.
+
+---
+
+## Step 2 — Configure n8n Cloud
+
+1. Create an account at:
+
+https://n8n.io
+
+2. Import:
+
+```text
+n8n-workflow/sortit-workflow.json
+```
+
+3. Open the **Gemini Vision - Classify** node.
+
+4. Create a new Query Authentication credential.
+
+```
+Name:
+key
+
+Value:
+YOUR_GEMINI_API_KEY
+```
+
+5. Activate the workflow.
+
+6. Copy the Production Webhook URL.
+
+Example:
+
+```
+https://your-workspace.app.n8n.cloud/webhook/sortit-scan
+```
+
+---
+
+## Step 3 — Configure the Frontend
+
+Open:
+
 ```javascript
-const N8N_WEBHOOK_URL = "[https://yourname.app.n8n.cloud/webhook/sortit-scan](https://yourname.app.n8n.cloud/webhook/sortit-scan)";
-
+frontend/index.html
 ```
 
+Replace:
 
-2. Commit and push your clean changes to your remote GitHub repository branch.
-3. Import the repository into your [Vercel Dashboard](https://vercel.com). Vercel reads your root `vercel.json` structure automatically. Click **Deploy** to get your secure public `https://...` application link.
+```javascript
+const N8N_WEBHOOK_URL = "YOUR_WEBHOOK_URL";
+```
 
-### Step 4 — Set up the Physical Kiosk
+with your production webhook URL.
 
-1. Launch the public Vercel deployment link on your kiosk screen, mobile module, or micro-PC browser (e.g., Raspberry Pi).
-2. Set the browser view mode to Fullscreen/Kiosk (`F11`).
-3. Position your integrated web-camera terminal. Present any item to the scanner lens, hit **Scan Item**, and track the real-time sorting recommendations!
+Example:
+
+```javascript
+const N8N_WEBHOOK_URL =
+"https://your-workspace.app.n8n.cloud/webhook/sortit-scan";
+```
 
 ---
 
-## 📑 Technical Highlights
+## Step 4 — Deploy on Vercel
 
-* **Prompt-Bounded Rules vs. Custom Classification Servers:** Training a traditional image classifier requires heavy custom server infrastructure and always-on web hosting fees. Instead, SortIt feeds exact dataset categories directly into Gemini's LLM vision context as structural rules, offering lightning-fast, zero-cost classification out of the box.
-* **CORS Safe Routing:** Built-in wildcard optimization options inside the cloud gateway prevent cross-origin tracking dropouts during server-to-client operations.
+1. Push the project to GitHub.
+2. Import the repository into Vercel.
+3. Vercel automatically detects:
+
+```text
+vercel.json
+```
+
+4. Click **Deploy**.
+
+After deployment you'll receive a public URL similar to:
+
+```
+https://sortit.vercel.app
+```
 
 ---
 
-### 🏛️ Program & Project Identification
+## Step 5 — Physical Kiosk Setup
 
-* **Project Name:** SortIt
-* **Target Focus:** UN Sustainable Development Goal 12 (SDG 12: Responsible Consumption and Production)
-* **Deployment System:** Cloud Native Sustainability & Waste Classification Automation
+1. Open the Vercel deployment URL.
+2. Switch the browser to Fullscreen (F11).
+3. Connect a webcam.
+4. Present an item.
+5. Press **Scan Item**.
+6. View the recommended waste bins.
 
-```
+---
 
-```
+# 💡 Technical Highlights
+
+### Serverless Architecture
+
+No backend hosting is required after deployment.
+
+---
+
+### AI Vision Classification
+
+Google Gemini Vision performs:
+
+- Material recognition
+- Multi-object analysis
+- Component-wise classification
+- Structured JSON generation
+
+---
+
+### Cloud Workflow Automation
+
+n8n acts as the orchestration layer:
+
+- Receives image payload
+- Routes prompts
+- Sends requests to Gemini
+- Returns structured responses
+
+---
+
+### Responsive Frontend
+
+The frontend provides:
+
+- Camera interface
+- Live scanning
+- JSON rendering
+- Bin recommendations
+
+---
+
+### CORS-Safe Communication
+
+The application is designed to support secure frontend-to-cloud communication while avoiding common cross-origin issues.
+
+---
+
+# 🛠️ Technologies Used
+
+| Technology | Purpose |
+|------------|----------|
+| HTML5 | User Interface |
+| CSS3 | Styling |
+| JavaScript | Frontend Logic |
+| Google Gemini 2.0 Flash | Vision AI |
+| n8n Cloud | Workflow Automation |
+| Vercel | Frontend Hosting |
+| JSON | AI Response Format |
+
+---
+
+# 🌱 Sustainability Impact
+
+SortIt promotes:
+
+- Better waste segregation
+- Increased recycling efficiency
+- Reduced landfill contamination
+- Smarter public recycling systems
+
+The project aligns with:
+
+## United Nations Sustainable Development Goal 12
+
+**Responsible Consumption and Production**
+
+---
+
+# 📌 Project Information
+
+| Property | Value |
+|----------|-------|
+| **Project Name** | SortIt |
+| **Category** | AI-Powered Waste Classification |
+| **Architecture** | Cloud Native |
+| **Deployment** | Serverless |
+| **Frontend** | Vercel |
+| **Workflow Engine** | n8n Cloud |
+| **Vision AI** | Google Gemini 2.0 Flash |
+| **Primary Goal** | Smart Waste Segregation |
+
+---
+
+# 📜 License
+
+This project is intended for educational, research, and sustainability-focused applications.
+
+---
+
+**SortIt** demonstrates how modern cloud-native technologies, workflow automation, and multimodal AI can be combined to build scalable, intelligent, and environmentally conscious waste management solutions.
+````
