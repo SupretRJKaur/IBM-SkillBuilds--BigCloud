@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SortIt — Kiosk Deployment Guide (Free Version — Google Gemini)
 
 Screen-in-front-of-bins setup. No terminal, no local machine needed after deployment.
@@ -90,3 +91,6 @@ needing a training step or a hosted model server. If you later want to validate
 or improve accuracy against your actual images, that dataset is still useful for
 manual testing — just run a batch of your labeled photos through the webhook and
 compare Gemini's output to the folder each image came from.
+=======
+# IBM-SkillBuilds--BigCloud
+>>>>>>> a205cad3761ef8915d5d5b2d1af8736c226eecd6
