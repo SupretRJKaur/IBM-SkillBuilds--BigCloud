@@ -1,347 +1,301 @@
-````markdown
-# ♻️ SortIt — AI-Powered Waste Classification Kiosk
+# ♻️ SortIt — AI-Powered Waste Segregation Kiosk
 
-> **SortIt** is an intelligent, cloud-native waste classification kiosk that uses **Google Gemini Vision AI** to identify waste materials and recommend the correct disposal bin in real time. Built on a **fully serverless architecture**, the system requires no backend hosting or local server management after deployment.
+> **SortIt** is an intelligent waste segregation system that leverages **Google Gemini 1.5 Flash Vision** and **n8n workflow automation** to accurately classify waste. Unlike traditional classifiers that label an object as a single item, SortIt identifies **individual physical components** of an object and recommends the correct disposal bin for each component, enabling smarter and more sustainable waste management.
 
 ---
 
-# 🌍 Overview
+## 🌍 The Problem
 
-SortIt helps improve waste segregation by combining computer vision, cloud automation, and AI-powered classification. A user simply places an item in front of the kiosk camera, and the system analyzes it, detects individual components, and recommends the appropriate waste bin for each detected material.
+Improper waste segregation is one of the biggest challenges in recycling. Many everyday objects are made from multiple materials, yet they are often discarded as a single piece of waste.
 
-The entire processing pipeline runs on cloud services, making the solution lightweight, scalable, and easy to deploy.
+For example, a juice carton contains paper, plastic, and sometimes aluminum layers. Similarly, a coffee cup may contain paper, plastic, and leftover liquid. Disposing of the entire object in one bin reduces recycling efficiency and increases landfill waste.
+
+SortIt addresses this challenge by using AI-powered visual understanding to identify each component individually and assign it to the appropriate waste stream.
 
 ---
 
 # ✨ Features
 
-- 📷 Camera-based real-time waste scanning
-- 🤖 Google Gemini 2.0 Flash Vision AI integration
-- ☁️ Fully serverless cloud architecture
-- 🔄 n8n cloud workflow orchestration
-- 🌐 Vercel frontend deployment
-- 🧩 Multi-component object analysis
-- 🗂️ Material-wise waste segregation
-- ⚡ Zero backend server maintenance
-- 📱 Responsive kiosk interface
-- 🌱 Designed for SDG 12 (Responsible Consumption and Production)
+- 📷 Live camera-based waste scanning
+- 🤖 AI-powered image understanding using Google Gemini 1.5 Flash Vision
+- 🧩 Component-level waste decomposition
+- 🎨 Automatic color-coded waste bin assignment
+- ⚡ Real-time waste classification
+- 🔄 Automated backend powered by n8n workflows
+- 📦 Structured JSON responses for seamless frontend integration
+- 🌐 Lightweight static frontend
+- 🚀 Easy deployment on Vercel or any static hosting platform
+
+---
+
+# 🗑️ Waste Bin Classification
+
+SortIt categorizes detected waste into four standardized disposal bins.
+
+| Bin | Category | Examples |
+|------|----------|----------|
+| 🔴 Red | Hazardous / E-Waste | Batteries, electronics, aerosol cans, chemicals, sharp objects |
+| 🟡 Yellow | Medical Waste | Syringes, gloves, masks, bandages, medicine blister packs |
+| 🔵 Blue | Recyclables | Plastic bottles, paper, cardboard, glass, metals, cans |
+| 🟢 Green | Biodegradable | Food waste, organic matter, food-soiled paper |
+
+---
+
+# 🧩 Example Waste Segregation
+
+Unlike conventional systems, SortIt analyzes every visible component of an object separately.
+
+## 🥤 Tetra Pak Juice Box
+
+| Component | Material | Bin |
+|-----------|----------|-----|
+| Carton Body | Cardboard | 🟢 Green |
+| Plastic Straw | Plastic | 🔵 Blue |
+| Straw Wrapper | Plastic | 🔵 Blue |
+
+**Explanation**
+
+Although commonly treated as a single item, a Tetra Pak consists of different materials. SortIt separates the cardboard body from the plastic straw and wrapper, ensuring each component is directed to the correct disposal bin.
+
+---
+
+## 🧴 Plastic Water Bottle
+
+| Component | Material | Bin |
+|-----------|----------|-----|
+| Bottle | PET Plastic | 🔵 Blue |
+| Cap | HDPE Plastic | 🔵 Blue |
+| Label | Plastic Film | 🔵 Blue |
+
+---
+
+## ☕ Disposable Coffee Cup
+
+| Component | Material | Bin |
+|-----------|----------|-----|
+| Paper Cup | Paper | 🟢 Green |
+| Plastic Lid | Plastic | 🔵 Blue |
+| Leftover Coffee | Organic Waste | 🟢 Green |
+
+---
+
+## 🔋 TV Remote
+
+| Component | Material | Bin |
+|-----------|----------|-----|
+| Battery | Hazardous Chemical | 🔴 Red |
+| Plastic Body | ABS Plastic | 🔵 Blue |
+
+---
+
+## 💊 Medicine Blister Pack
+
+| Component | Material | Bin |
+|-----------|----------|-----|
+| Blister Pack | Medical Waste | 🟡 Yellow |
+| Foil Layer | Medical Waste | 🟡 Yellow |
 
 ---
 
 # 🏗️ System Architecture
 
-```text
-                     +---------------------------+
-                     |   Camera / Browser UI     |
-                     |     (Vercel Frontend)     |
-                     +-------------+-------------+
-                                   |
-                                   | Capture Image
-                                   | Convert to Base64
-                                   v
-                     +---------------------------+
-                     |     n8n Cloud Webhook     |
-                     |  Workflow Orchestration   |
-                     +-------------+-------------+
-                                   |
-                                   | Prompt Routing
-                                   v
-                     +---------------------------+
-                     | Google Gemini 2.0 Flash   |
-                     |      Vision AI Model      |
-                     +-------------+-------------+
-                                   |
-                                   | JSON Response
-                                   v
-                     +---------------------------+
-                     |      Vercel Frontend      |
-                     | Displays Component → Bin  |
-                     +---------------------------+
+```
+                    User
+                      │
+                      ▼
+             Capture Waste Image
+                      │
+                      ▼
+          Frontend (index.html)
+                      │
+          POST Base64 Image
+                      │
+                      ▼
+              n8n Webhook Trigger
+                      │
+                      ▼
+        Prepare Gemini Vision Request
+                      │
+                      ▼
+       Google Gemini 1.5 Flash Vision
+                      │
+                      ▼
+      Component & Material Detection
+                      │
+                      ▼
+        Parse & Validate JSON Output
+                      │
+                      ▼
+       Return Structured JSON Response
+                      │
+                      ▼
+     Render Color-Coded Waste Components
 ```
 
 ---
 
 # 🔄 Workflow
 
-1. User places an object in front of the kiosk camera.
-2. The frontend captures an image.
-3. The image is converted into a Base64 payload.
-4. The payload is sent to an n8n webhook.
-5. n8n forwards the request to Google Gemini Vision.
-6. Gemini identifies every visible material/component.
-7. Gemini returns structured JSON.
-8. The frontend displays the recommended waste bin for every detected component.
+### 1. Capture
+
+The user captures an image using the device camera.
 
 ---
 
-# 📁 Project Structure
+### 2. Upload
+
+The frontend converts the captured image into Base64 format and sends it to the configured **n8n Production Webhook**.
+
+---
+
+### 3. AI Request Preparation
+
+The workflow prepares the Gemini Vision request by embedding:
+
+- Waste segregation instructions
+- Material classification rules
+- JSON formatting constraints
+
+---
+
+### 4. Gemini Vision Analysis
+
+Google Gemini analyzes the image to determine:
+
+- Item name
+- Individual components
+- Material type
+- Appropriate disposal bin
+
+Example response:
+
+```json
+{
+  "item": "Plastic Water Bottle",
+  "components": [
+    {
+      "part": "Bottle",
+      "material": "PET Plastic",
+      "bin": "Blue"
+    },
+    {
+      "part": "Cap",
+      "material": "HDPE Plastic",
+      "bin": "Blue"
+    },
+    {
+      "part": "Label",
+      "material": "Plastic Film",
+      "bin": "Blue"
+    }
+  ]
+}
+```
+
+---
+
+### 5. Response Parsing
+
+The raw AI response is sanitized and validated to guarantee a consistent JSON structure before being returned to the frontend.
+
+---
+
+### 6. Frontend Visualization
+
+Each detected component is displayed as a separate card with its assigned waste bin, allowing users to easily understand how each part should be disposed of.
+
+---
+
+# 📂 Project Structure
 
 ```text
-sortit/
+SortIt/
 │
-├── frontend/
-│   ├── index.html
-│   └── vercel.json
-│
-├── n8n-workflow/
-│   └── sortit-workflow.json
-│
-├── README.md
-│
-└── data/                 (Ignored via .gitignore)
-```
-
-### Folder Description
-
-| Folder | Purpose |
-|----------|----------|
-| **frontend/** | User interface, camera capture, API communication |
-| **n8n-workflow/** | Importable cloud workflow |
-| **README.md** | Documentation |
-| **data/** | Local reference dataset (excluded from GitHub) |
-
----
-
-# 📂 Dataset Information
-
-The development version of SortIt contains a local dataset consisting of **5,000+ reference images** covering multiple waste categories.
-
-To keep the repository lightweight and comply with GitHub storage limitations, the dataset is excluded using `.gitignore`.
-
-```text
-data/
-├── hazardous/
-├── medical/
-├── recyclable/
-└── biodegradable/
-```
-
-The deployed application **does not require the dataset** because classification is performed live using **Google Gemini Vision AI**.
-
----
-
-# 🧠 Waste Classification Matrix
-
-| Dataset Category | Example Materials | Assigned Bin |
-|-----------------|------------------|--------------|
-| **hazardous/** | Batteries, chemicals, electronic waste | 🔴 Red Bin |
-| **medical/** | Medical packaging, biohazard waste, clinical items | 🟡 Yellow Bin |
-| **recyclable/** | Plastic, glass, cardboard, metal, paper | 🔵 Blue Bin |
-| **biodegradable/** | Organic waste, biodegradable paper, food waste | 🟢 Green Bin |
-
----
-
-# 🚀 Deployment Guide
-
-## Step 1 — Generate a Gemini API Key
-
-Visit:
-
-https://aistudio.google.com/apikey
-
-1. Sign in using a Google account.
-2. Click **Create API Key**.
-3. Copy and securely store the generated key.
-
-The free tier provides:
-
-- 15 requests per minute
-- 1,500 requests per day
-
-which is sufficient for typical kiosk usage.
-
----
-
-## Step 2 — Configure n8n Cloud
-
-1. Create an account at:
-
-https://n8n.io
-
-2. Import:
-
-```text
-n8n-workflow/sortit-workflow.json
-```
-
-3. Open the **Gemini Vision - Classify** node.
-
-4. Create a new Query Authentication credential.
-
-```
-Name:
-key
-
-Value:
-YOUR_GEMINI_API_KEY
-```
-
-5. Activate the workflow.
-
-6. Copy the Production Webhook URL.
-
-Example:
-
-```
-https://your-workspace.app.n8n.cloud/webhook/sortit-scan
+├── index.html          # Single-page application with live camera functionality
+├── vercel.json         # Deployment configuration
+└── README.md           # Project documentation
 ```
 
 ---
 
-## Step 3 — Configure the Frontend
-
-Open:
-
-```javascript
-frontend/index.html
-```
-
-Replace:
-
-```javascript
-const N8N_WEBHOOK_URL = "YOUR_WEBHOOK_URL";
-```
-
-with your production webhook URL.
-
-Example:
-
-```javascript
-const N8N_WEBHOOK_URL =
-"https://your-workspace.app.n8n.cloud/webhook/sortit-scan";
-```
-
----
-
-## Step 4 — Deploy on Vercel
-
-1. Push the project to GitHub.
-2. Import the repository into Vercel.
-3. Vercel automatically detects:
-
-```text
-vercel.json
-```
-
-4. Click **Deploy**.
-
-After deployment you'll receive a public URL similar to:
-
-```
-https://sortit.vercel.app
-```
-
----
-
-## Step 5 — Physical Kiosk Setup
-
-1. Open the Vercel deployment URL.
-2. Switch the browser to Fullscreen (F11).
-3. Connect a webcam.
-4. Present an item.
-5. Press **Scan Item**.
-6. View the recommended waste bins.
-
----
-
-# 💡 Technical Highlights
-
-### Serverless Architecture
-
-No backend hosting is required after deployment.
-
----
-
-### AI Vision Classification
-
-Google Gemini Vision performs:
-
-- Material recognition
-- Multi-object analysis
-- Component-wise classification
-- Structured JSON generation
-
----
-
-### Cloud Workflow Automation
-
-n8n acts as the orchestration layer:
-
-- Receives image payload
-- Routes prompts
-- Sends requests to Gemini
-- Returns structured responses
-
----
-
-### Responsive Frontend
-
-The frontend provides:
-
-- Camera interface
-- Live scanning
-- JSON rendering
-- Bin recommendations
-
----
-
-### CORS-Safe Communication
-
-The application is designed to support secure frontend-to-cloud communication while avoiding common cross-origin issues.
-
----
-
-# 🛠️ Technologies Used
+# 🛠️ Technology Stack
 
 | Technology | Purpose |
-|------------|----------|
-| HTML5 | User Interface |
+|------------|---------|
+| HTML5 | Frontend |
 | CSS3 | Styling |
-| JavaScript | Frontend Logic |
-| Google Gemini 2.0 Flash | Vision AI |
-| n8n Cloud | Workflow Automation |
-| Vercel | Frontend Hosting |
-| JSON | AI Response Format |
+| JavaScript | Camera & API Integration |
+| Google Gemini 2.0 Flash | Multimodal Vision AI |
+| n8n | Workflow Automation |
+| Vercel | Deployment |
 
 ---
 
-# 🌱 Sustainability Impact
+# 🚀 Quick Setup
 
-SortIt promotes:
+## 1. Configure n8n Workflow
 
-- Better waste segregation
-- Increased recycling efficiency
-- Reduced landfill contamination
-- Smarter public recycling systems
-
-The project aligns with:
-
-## United Nations Sustainable Development Goal 12
-
-**Responsible Consumption and Production**
+- Import the workflow into your n8n instance.
+- Add your Google Gemini API key.
+- Activate the workflow.
+- Copy the Production Webhook URL.
 
 ---
 
-# 📌 Project Information
+## 2. Connect the Frontend
 
-| Property | Value |
-|----------|-------|
-| **Project Name** | SortIt |
-| **Category** | AI-Powered Waste Classification |
-| **Architecture** | Cloud Native |
-| **Deployment** | Serverless |
-| **Frontend** | Vercel |
-| **Workflow Engine** | n8n Cloud |
-| **Vision AI** | Google Gemini 2.0 Flash |
-| **Primary Goal** | Smart Waste Segregation |
+Open **index.html** and update:
+
+```javascript
+const N8N_WEBHOOK_URL = "YOUR_PRODUCTION_WEBHOOK_URL";
+```
 
 ---
 
-# 📜 License
+## 3. Run the Project
 
-This project is intended for educational, research, and sustainability-focused applications.
+Simply open:
+
+```
+index.html
+```
+
+or deploy it on any static hosting platform.
 
 ---
 
-**SortIt** demonstrates how modern cloud-native technologies, workflow automation, and multimodal AI can be combined to build scalable, intelligent, and environmentally conscious waste management solutions.
-````
+# 🚀 Deployment
+
+### Deploy using Vercel
+
+```bash
+git clone https://github.com/your-username/SortIt.git
+
+cd SortIt
+
+vercel
+```
+
+or
+
+1. Push the repository to GitHub.
+2. Import it into Vercel.
+3. Deploy.
+
+No dedicated backend server is required because all AI processing is handled through **n8n**.
+
+---
+
+# 💡 Future Improvements
+
+- 🌍 Multi-language support
+- 🎤 Voice-assisted waste guidance
+- 📊 Recycling analytics dashboard
+- 📈 Confidence scores for AI predictions
+- 🤖 IoT-enabled smart recycling kiosks
+- 📦 Barcode and QR code recognition
+- ☁️ Cloud storage for scan history
+
+---
+
+Built using **Google Gemini 2.0 Flash Vision**, **n8n**, and modern web technologies to make waste segregation smarter, more accurate, and environmentally responsible.
