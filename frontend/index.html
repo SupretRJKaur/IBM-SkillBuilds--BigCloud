@@ -42,7 +42,6 @@
 </div>
 
 <script>
-  // >>> PASTE YOUR ACTIVE N8N PRODUCTION WEBHOOK URL HERE <<<
   const N8N_WEBHOOK_URL = "https://sort-it.app.n8n.cloud/webhook/sortit-scan";
 
   const video = document.getElementById('video');
@@ -59,7 +58,6 @@
 
   scanBtn.addEventListener('click', async () => {
     scanBtn.disabled = true;
-    loading.style.with = 'block';
     loading.style.display = 'block';
     resultDiv.innerHTML = '';
 
@@ -71,6 +69,7 @@
     try {
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageBase64 })
       });
