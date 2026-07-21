@@ -1,275 +1,74 @@
+Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>SortIt — Smart Waste Kiosk</title>
+<title>SortIt</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  
-  body {
-    background-color: #f3e8ff; /* Soft pastel background */
-    color: #1e293b;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
-
-  .kiosk-card {
-    background: #ffffff;
-    width: 92%;
-    max-width: 520px;
-    padding: 28px 24px;
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .brand-tag {
-    background: #fbcfe8;
-    color: #9d174d;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 20px;
-    margin-bottom: 12px;
-    display: inline-block;
-  }
-
-  h1 { font-size: 2.2rem; color: #0f172a; margin-bottom: 4px; font-weight: 800; }
-  .tagline { color: #64748b; font-size: 1rem; margin-bottom: 20px; }
-
-  /* Media/Camera Container */
-  .media-box {
-    width: 100%;
-    position: relative;
-    border-radius: 18px;
-    overflow: hidden;
-    background: #f1f5f9;
-    border: 2px solid #e2e8f0;
-  }
-
-  #video {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    display: block;
-  }
-
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { background: #0f172a; color: white; height: 100vh; overflow: hidden; }
+  .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; }
+  h1 { font-size: 2.5rem; margin-bottom: 10px; }
+  .tagline { color: #94a3b8; margin-bottom: 20px; font-size: 1.1rem; }
+  #video, #canvas { border-radius: 16px; max-width: 480px; width: 90%; border: 4px solid #334155; }
   #canvas { display: none; }
-
-  /* Action Buttons */
-  .btn-primary {
-    width: 100%;
-    margin-top: 20px;
-    padding: 16px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 14px;
-    background: #ec4899;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3);
-    transition: transform 0.1s ease, background 0.2s ease;
-  }
-
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
-
-  .btn-secondary {
-    background: #0284c7;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
-    margin-top: 15px;
-  }
-
-  /* Progress Bar Container */
-  #loadingContainer {
-    width: 100%;
-    margin-top: 15px;
-    display: none;
-  }
-
-  .progress-track {
-    width: 100%;
-    height: 12px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    width: 0%;
-    height: 100%;
-    background: #22c55e; /* Vibrant Green Loader */
-    border-radius: 10px;
-    transition: width 0.3s ease;
-  }
-
-  .status-text {
-    font-size: 0.9rem;
-    color: #475569;
-    margin-top: 8px;
-    font-weight: 600;
-  }
-
-  /* Results Screen Section */
-  #resultContainer {
-    width: 100%;
-    display: none;
-  }
-
-  .item-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 16px;
-    text-transform: capitalize;
-  }
-
-  .component-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: left;
-  }
-
-  .part-info strong {
-    font-size: 1.05rem;
-    color: #1e293b;
-    display: block;
-  }
-
-  .part-info span {
-    font-size: 0.85rem;
-    color: #64748b;
-  }
-
-  .bin-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: white;
-    white-space: nowrap;
-  }
-
-  /* Accessible Circle Visuals */
-  .color-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: white;
-    display: inline-block;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-  }
-
-  /* Bin Variants */
-  .bin-red { background: #ef4444; }        /* Hazardous */
-  .bin-yellow { background: #eab308; color: #1e293b; } /* Medical */
-  .bin-yellow .color-dot { border-color: #1e293b; }
-  .bin-blue { background: #3b82f6; }       /* Recyclable */
-  .bin-green { background: #22c55e; }      /* Biodegradable */
-
-  .error-box {
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    text-align: left;
-  }
+  #scanBtn { margin-top: 20px; padding: 16px 48px; font-size: 1.3rem; border: none; border-radius: 12px;
+             background: #22c55e; color: white; cursor: pointer; font-weight: bold; }
+  #scanBtn:disabled { background: #64748b; }
+  #result { margin-top: 25px; width: 90%; max-width: 480px; }
+  .component-card { display: flex; justify-content: space-between; align-items: center;
+                    background: #1e293b; padding: 14px 20px; border-radius: 10px; margin-bottom: 10px; }
+  .bin-tag { padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+  .bin-red { background: #ef4444; }
+  .bin-yellow { background: #eab308; color: #1e293b; }
+  .bin-blue { background: #3b82f6; }
+  .bin-green { background: #22c55e; }
+  .loading { color: #94a3b8; margin-top: 20px; }
+  .item-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; text-align: center; }
+  .error-box { color: #ef4444; background: #1e293b; padding: 12px 16px; border-radius: 8px;
+               font-size: 0.85rem; margin-top: 15px; text-align: left; word-break: break-word; }
 </style>
 </head>
 <body>
-
-<div class="kiosk-card">
-  <span class="brand-tag">SDG Goal 12 · SortIt Kiosk</span>
+<div class="container">
   <h1>♻️ SortIt</h1>
-  <p class="tagline">Hold item in front of camera & click scan</p>
+  <p class="tagline">Hold, Scan, Discard.</p>
 
-  <!-- Live Camera Screen -->
-  <div id="cameraScreen" style="width: 100%;">
-    <div class="media-box">
-      <video id="video" autoplay playsinline></video>
-      <canvas id="canvas"></canvas>
-    </div>
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas"></canvas>
 
-    <!-- Progress bar visible UNDER active camera while scanning -->
-    <div id="loadingContainer">
-      <div class="progress-track">
-        <div id="progressFill" class="progress-fill"></div>
-      </div>
-      <p id="statusText" class="status-text">Scanning item...</p>
-    </div>
+  <button id="scanBtn">📷 Scan Item</button>
 
-    <button id="scanBtn" class="btn-primary">📷 Scan Item</button>
-  </div>
-
-  <!-- Results Screen (Appears ONLY after scan finishes) -->
-  <div id="resultContainer">
-    <div id="itemTitle" class="item-title">---</div>
-    <div id="componentsList"></div>
-    <button id="resetBtn" class="btn-primary btn-secondary">🔄 Scan Another Item</button>
-  </div>
+  <div id="loading" class="loading" style="display:none;">Scanning... please wait</div>
+  <div id="result"></div>
 </div>
 
 <script>
+  // >>> Make sure this EXACTLY matches your n8n Production URL <<<
   const N8N_WEBHOOK_URL = "https://sort-it.app.n8n.cloud/webhook/sortit-scan";
 
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const scanBtn = document.getElementById('scanBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  
-  const cameraScreen = document.getElementById('cameraScreen');
-  const loadingContainer = document.getElementById('loadingContainer');
-  const progressFill = document.getElementById('progressFill');
-  const statusText = document.getElementById('statusText');
-  const resultContainer = document.getElementById('resultContainer');
-  
-  const itemTitle = document.getElementById('itemTitle');
-  const componentsList = document.getElementById('componentsList');
+  const loading = document.getElementById('loading');
+  const resultDiv = document.getElementById('result');
 
-  // Start Camera
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
     .then(stream => { video.srcObject = stream; })
     .catch(err => {
-      cameraScreen.innerHTML = `<div class="error-box">Camera Access Failed: ${err.message}</div>`;
+      resultDiv.innerHTML = `<p style="color:#ef4444;">Camera access failed: ${err.message}</p>`;
     });
 
-  // Scan Click Handler
   scanBtn.addEventListener('click', async () => {
-    // 1. Keep camera visible, show loading bar & disable scan button
     scanBtn.disabled = true;
-    loadingContainer.style.display = 'block';
-    updateProgress(20, "Capturing item frame...");
+    loading.style.display = 'block';
+    resultDiv.innerHTML = '';
 
-    // 2. Capture Frame
-    const maxDim = 640;
-    let scale = Math.min(maxDim / video.videoWidth, maxDim / video.videoHeight);
-    canvas.width = video.videoWidth * scale;
-    canvas.height = video.videoHeight * scale;
-    
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
-
-    updateProgress(50, "Classifying materials with Vision AI...");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const imageBase64 = canvas.toDataURL('image/jpeg', 0.8);
 
     try {
       const response = await fetch(N8N_WEBHOOK_URL, {
@@ -279,102 +78,49 @@
         body: JSON.stringify({ image: imageBase64 })
       });
 
-      updateProgress(85, "Mapping items to bins...");
-
+      // Show the real HTTP status if n8n responded but with an error code
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(`Server status ${response.status}: ${text.slice(0, 150)}`);
+        throw new Error(`Server responded ${response.status}: ${text.slice(0, 200)}`);
       }
 
       const data = await response.json();
-      updateProgress(100, "Scan complete!");
-
-      // 3. NOW hide camera & transition to Results screen
-      setTimeout(() => {
-        cameraScreen.style.display = 'none';
-        loadingContainer.style.display = 'none';
-        renderResults(data);
-      }, 400);
-
+      renderResult(data);
     } catch (err) {
-      loadingContainer.style.display = 'none';
-      cameraScreen.style.display = 'none';
-      resultContainer.style.display = 'block';
-      componentsList.innerHTML = `
+      // Show the REAL error instead of a generic message
+      console.error('SortIt scan error:', err);
+      resultDiv.innerHTML = `
         <div class="error-box">
-          <strong>Scan Failed:</strong><br/>${err.message || err.toString()}<br/><br/>
-          Ensure n8n workflow is Active and API Key is valid.
+          <strong>Debug info:</strong><br/>
+          ${err.message || err.toString()}<br/><br/>
+          Check: (1) n8n workflow is Active, (2) using Production webhook URL,
+          (3) CORS "Allowed Origins" = * on the webhook node.
         </div>`;
     } finally {
+      loading.style.display = 'none';
       scanBtn.disabled = false;
     }
   });
 
-  // Helper for progress updates
-  function updateProgress(percent, text) {
-    progressFill.style.width = percent + '%';
-    statusText.innerText = text;
-  }
-
-  // Render classification results
-  function renderResults(data) {
-    resultContainer.style.display = 'block';
-    
-    itemTitle.innerText = data.item_name || data.item || 'Detected Item';
-    componentsList.innerHTML = '';
-
+  function renderResult(data) {
     if (!data.components || data.components.length === 0) {
-      componentsList.innerHTML = `<p style="color:#64748b;">Could not identify distinct parts. Please try again with clear lighting.</p>`;
+      resultDiv.innerHTML = `<p>Could not identify the item. Please try again with better lighting.</p>`;
       return;
     }
 
+    let html = `<div class="item-name">${data.item_name || 'Detected Item'}</div>`;
     data.components.forEach(comp => {
-      const partName = comp.part || comp.component || comp.name || 'Component Part';
-      const rawBin = (comp.bin || 'blue').toLowerCase();
-
-      // Accessible color circle + bin category text
-      let binClass = 'bin-blue';
-      let binName = 'BLUE BIN';
-      let category = 'Recyclable';
-
-      if (rawBin.includes('red') || rawBin.includes('hazard') || rawBin.includes('e-waste')) {
-        binClass = 'bin-red';
-        binName = 'RED BIN';
-        category = 'Hazardous Waste';
-      } else if (rawBin.includes('yellow') || rawBin.includes('medical') || rawBin.includes('clinical')) {
-        binClass = 'bin-yellow';
-        binName = 'YELLOW BIN';
-        category = 'Medical Waste';
-      } else if (rawBin.includes('green') || rawBin.includes('bio') || rawBin.includes('organic')) {
-        binClass = 'bin-green';
-        binName = 'GREEN BIN';
-        category = 'Biodegradable';
-      } else {
-        binClass = 'bin-blue';
-        binName = 'BLUE BIN';
-        category = 'Recyclable';
-      }
-
-      componentsList.innerHTML += `
+      html += `
         <div class="component-card">
-          <div class="part-info">
-            <strong>${partName}</strong>
-            <span>${comp.material || category} — ${comp.reason || 'Dispose here'}</span>
+          <div>
+            <div><strong>${comp.part}</strong></div>
+            <div style="color:#94a3b8; font-size:0.85rem;">${comp.material} — ${comp.reason || ''}</div>
           </div>
-          <div class="bin-badge ${binClass}">
-            <span class="color-dot"></span>
-            <span>${binName} (${category})</span>
-          </div>
+          <div class="bin-tag bin-${comp.bin}">${comp.bin.toUpperCase()} BIN</div>
         </div>`;
     });
+    resultDiv.innerHTML = html;
   }
-
-  // Reset Button Handler
-  resetBtn.addEventListener('click', () => {
-    resultContainer.style.display = 'none';
-    cameraScreen.style.display = 'block';
-    updateProgress(0, "");
-  });
 </script>
 </body>
 </html>
