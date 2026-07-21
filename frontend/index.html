@@ -8,10 +8,13 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
   
   body {
-    background: #fdf6ee; /* Pastel light background */
-    color: #4a3b32;
-    height: 100vh;
-    overflow: hidden;
+    background: #0f172a;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
   }
 
   .container {
@@ -19,124 +22,203 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    width: 100%;
+    max-width: 540px;
     padding: 20px;
-    background: #ffffff; /* White card layout */
-    max-width: 520px;
-    margin: 0 auto;
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(220, 150, 100, 0.12);
+    text-align: center;
   }
 
-  h1 { font-size: 2.5rem; margin-bottom: 10px; color: #3a2b22; }
-  .tagline { color: #8c7365; margin-bottom: 20px; font-size: 1.1rem; }
+  .brand-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  h1 { font-size: 2.5rem; font-weight: 800; }
+  .tagline { color: #94a3b8; margin-bottom: 24px; font-size: 1.05rem; }
+
+  /* Media / Camera Container */
+  .camera-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   #video, #canvas {
     border-radius: 16px;
+    width: 100%;
     max-width: 480px;
-    width: 90%;
-    border: 4px solid #ffedd5;
-    background: #fff7ed;
+    height: 320px;
+    object-fit: cover;
+    border: 3px solid #334155;
+    background: #1e293b;
   }
 
   #canvas { display: none; }
 
-  #scanBtn {
+  /* Scan Button */
+  .btn-action {
     margin-top: 20px;
-    padding: 16px 48px;
-    font-size: 1.3rem;
+    padding: 14px 40px;
+    font-size: 1.2rem;
     border: none;
     border-radius: 12px;
-    background: #f97316; /* Pastel Orange */
+    background: #22c55e;
     color: white;
     cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.25);
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  #scanBtn:disabled { background: #fed7aa; color: #9a3412; }
+  .btn-action:hover { background: #16a34a; }
+  .btn-action:active { transform: scale(0.98); }
+  .btn-action:disabled { background: #64748b; cursor: not-allowed; }
 
   .btn-reset {
-    background: #fb923c !important;
-    margin-top: 20px;
+    background: #3b82f6;
+    margin-top: 24px;
+  }
+  .btn-reset:hover { background: #2563eb; }
+
+  /* Loading State */
+  .loading {
+    color: #94a3b8;
+    margin-top: 16px;
+    font-size: 1rem;
+    font-weight: 600;
   }
 
-  #result { margin-top: 25px; width: 90%; max-width: 480px; }
+  /* Result Screen */
+  #result {
+    width: 100%;
+    max-width: 480px;
+    display: none;
+  }
+
+  .item-name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+  }
 
   .component-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fff7ed;
-    padding: 14px 20px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ffedd5;
+    background: #1e293b;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    text-align: left;
+    border: 1px solid #334155;
   }
 
-  .bin-tag { padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
-  .bin-red { background: #ef4444; color: white; }
-  .bin-yellow { background: #eab308; color: #1e293b; }
-  .bin-blue { background: #3b82f6; color: white; }
-  .bin-green { background: #22c55e; color: white; }
+  .part-info strong {
+    font-size: 1.05rem;
+    color: #f8fafc;
+    display: block;
+    margin-bottom: 2px;
+    text-transform: capitalize;
+  }
 
-  .loading { color: #c2410c; margin-top: 20px; font-weight: bold; }
-  .item-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; text-align: center; color: #3a2b22; }
+  .part-info span {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .bin-tag {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  /* Color-coded Bin Styles */
+  .bin-red { background: #ef4444; color: white; }        /* Hazardous */
+  .bin-yellow { background: #eab308; color: #0f172a; } /* Medical */
+  .bin-blue { background: #3b82f6; color: white; }       /* Recyclable */
+  .bin-green { background: #22c55e; color: white; }      /* Biodegradable */
 
   .error-box {
-    color: #991b1b;
-    background: #fef2f2;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    color: #ef4444;
+    background: #1e293b;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #7f1d1d;
+    font-size: 0.9rem;
     margin-top: 15px;
     text-align: left;
     word-break: break-word;
-    border: 1px solid #fecaca;
   }
 </style>
 </head>
 <body>
+
 <div class="container">
-  <h1>♻️ SortIt</h1>
+  <div class="brand-header">
+    <h1>♻️ SortIt</h1>
+  </div>
   <p class="tagline">Hold, Scan, Discard.</p>
 
-  <div id="cameraView" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+  <!-- Live Camera View -->
+  <div id="cameraView" class="camera-container">
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
-    <button id="scanBtn">📷 Scan Item</button>
+
+    <button id="scanBtn" class="btn-action">📷 Scan Item</button>
     <div id="loading" class="loading" style="display:none;">Scanning... please wait</div>
   </div>
 
-  <div id="result"></div>
+  <!-- Scan Results View (Camera hidden when shown) -->
+  <div id="result">
+    <div id="resultContent"></div>
+    <button id="resetBtn" class="btn-action btn-reset">🔄 Scan Another Item</button>
+  </div>
 </div>
 
 <script>
-  // >>> Make sure this EXACTLY matches your n8n Production URL <<<
+  // Replace with your active n8n production webhook endpoint
   const N8N_WEBHOOK_URL = "https://sort-it.app.n8n.cloud/webhook/sortit-scan";
 
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const scanBtn = document.getElementById('scanBtn');
+  const resetBtn = document.getElementById('resetBtn');
   const loading = document.getElementById('loading');
-  const resultDiv = document.getElementById('result');
+  
   const cameraView = document.getElementById('cameraView');
+  const resultDiv = document.getElementById('result');
+  const resultContent = document.getElementById('resultContent');
 
+  // Request Camera Stream
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
     .then(stream => { video.srcObject = stream; })
     .catch(err => {
-      resultDiv.innerHTML = `<p style="color:#ef4444;">Camera access failed: ${err.message}</p>`;
+      cameraView.innerHTML += `<div class="error-box">Camera access failed: ${err.message}</div>`;
     });
 
+  // Handle Scan Action
   scanBtn.addEventListener('click', async () => {
     scanBtn.disabled = true;
     loading.style.display = 'block';
-    resultDiv.innerHTML = '';
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    const imageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+    // Capture Frame to Canvas
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Compress frame slightly to optimize network request
+    const imageBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
     try {
       const response = await fetch(N8N_WEBHOOK_URL, {
@@ -146,7 +228,6 @@
         body: JSON.stringify({ image: imageBase64 })
       });
 
-      // Show the real HTTP status if n8n responded but with an error code
       if (!response.ok) {
         const text = await response.text();
         throw new Error(`Server responded ${response.status}: ${text.slice(0, 200)}`);
@@ -154,18 +235,20 @@
 
       const data = await response.json();
       
-      // Hide Camera and show result
+      // Hide Camera View & Show Results
       cameraView.style.display = 'none';
+      resultDiv.style.display = 'block';
       renderResult(data);
+
     } catch (err) {
-      // Show the REAL error instead of a generic message
       console.error('SortIt scan error:', err);
-      resultDiv.innerHTML = `
+      cameraView.style.display = 'none';
+      resultDiv.style.display = 'block';
+      resultContent.innerHTML = `
         <div class="error-box">
           <strong>Debug info:</strong><br/>
           ${err.message || err.toString()}<br/><br/>
-          Check: (1) n8n workflow is Active, (2) using Production webhook URL,
-          (3) CORS "Allowed Origins" = * on the webhook node.
+          Please check: (1) n8n workflow is Active, (2) CORS "Allowed Origins" = * on the webhook node.
         </div>`;
     } finally {
       loading.style.display = 'none';
@@ -173,44 +256,61 @@
     }
   });
 
+  // Reset to Scan Another Item
+  resetBtn.addEventListener('click', () => {
+    resultDiv.style.display = 'none';
+    cameraView.style.display = 'flex';
+  });
+
+  // Render Result Function with Strict Non-Undefined Fallbacks
   function renderResult(data) {
     const itemName = data.item_name || data.item || 'Detected Item';
 
     if (!data.components || data.components.length === 0) {
-      resultDiv.innerHTML = `
-        <p>Could not identify the item. Please try again with better lighting.</p>
-        <button id="resetBtn" class="btn-reset" onclick="resetScan()" style="padding: 12px 24px; font-size: 1rem; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold;">🔄 Scan Another Item</button>
-      `;
+      resultContent.innerHTML = `
+        <div class="item-name">${itemName}</div>
+        <p style="color:#94a3b8;">Could not identify distinct parts. Please try again with clear lighting.</p>`;
       return;
     }
 
     let html = `<div class="item-name">${itemName}</div>`;
+    
     data.components.forEach(comp => {
-      const partName = comp.part || comp.component || comp.name || 'Component';
+      // Prevent 'undefined' outputs by checking alternative properties
+      const partName = comp.part || comp.component || comp.name || 'Main Component';
       const material = comp.material || 'Mixed Materials';
-      const binColor = comp.bin ? comp.bin.toLowerCase() : 'blue';
+      const reason = comp.reason ? ` — ${comp.reason}` : '';
+      const rawBin = (comp.bin || '').toLowerCase();
+
+      // Bin Category Logic: Red (Hazardous), Yellow (Medical), Blue (Recyclable), Green (Biodegradable)
+      let binClass = 'bin-blue';
+      let binLabel = 'BLUE BIN';
+
+      if (rawBin.includes('red') || rawBin.includes('hazard') || rawBin.includes('e-waste')) {
+        binClass = 'bin-red';
+        binLabel = 'RED BIN- Hazardous';
+      } else if (rawBin.includes('yellow') || rawBin.includes('medical') || rawBin.includes('clinical')) {
+        binClass = 'bin-yellow';
+        binLabel = 'YELLOW BIN- Medical';
+      } else if (rawBin.includes('green') || rawBin.includes('bio') || rawBin.includes('organic')) {
+        binClass = 'bin-green';
+        binLabel = 'GREEN BIN- Biodegradable';
+      } else {
+        binClass = 'bin-blue';
+        binLabel = 'BLUE BIN- Recyclable';
+      }
 
       html += `
         <div class="component-card">
-          <div>
-            <div><strong>${partName}</strong></div>
-            <div style="color:#78350f; font-size:0.85rem;">${material} — ${comp.reason || ''}</div>
+          <div class="part-info">
+            <strong>${partName}</strong>
+            <span>${material}${reason}</span>
           </div>
-          <div class="bin-tag bin-${binColor}">${binColor.toUpperCase()} BIN</div>
+          <div class="bin-tag ${binClass}">${binLabel}</div>
         </div>`;
     });
 
-    html += `
-      <div style="text-align: center;">
-        <button id="resetBtn" class="btn-reset" onclick="resetScan()" style="padding: 12px 24px; font-size: 1rem; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold;">🔄 Scan Another Item</button>
-      </div>`;
-
-    resultDiv.innerHTML = html;
-  }
-
-  function resetScan() {
-    resultDiv.innerHTML = '';
-    cameraView.style.display = 'flex';
+    resultContent.innerHTML = html;
   }
 </script>
 </body>
