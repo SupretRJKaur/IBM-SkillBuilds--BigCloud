@@ -288,16 +288,16 @@
 
       if (rawBin.includes('red') || rawBin.includes('hazard') || rawBin.includes('e-waste')) {
         binClass = 'bin-red';
-        binLabel = 'RED BIN- Hazardous';
+        binLabel = 'RED BIN';
       } else if (rawBin.includes('yellow') || rawBin.includes('medical') || rawBin.includes('clinical')) {
         binClass = 'bin-yellow';
-        binLabel = 'YELLOW BIN- Medical';
+        binLabel = 'YELLOW BIN';
       } else if (rawBin.includes('green') || rawBin.includes('bio') || rawBin.includes('organic')) {
         binClass = 'bin-green';
-        binLabel = 'GREEN BIN- Biodegradable';
+        binLabel = 'GREEN BIN';
       } else {
         binClass = 'bin-blue';
-        binLabel = 'BLUE BIN- Recyclable';
+        binLabel = 'BLUE BIN';
       }
 
       html += `
