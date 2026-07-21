@@ -167,31 +167,6 @@ Google Gemini analyzes the image to determine:
 - Material type
 - Appropriate disposal bin
 
-Example response:
-
-```json
-{
-  "item": "Plastic Water Bottle",
-  "components": [
-    {
-      "part": "Bottle",
-      "material": "PET Plastic",
-      "bin": "Blue"
-    },
-    {
-      "part": "Cap",
-      "material": "HDPE Plastic",
-      "bin": "Blue"
-    },
-    {
-      "part": "Label",
-      "material": "Plastic Film",
-      "bin": "Blue"
-    }
-  ]
-}
-```
-
 ---
 
 ### 5. Response Parsing
