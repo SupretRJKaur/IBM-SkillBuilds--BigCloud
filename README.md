@@ -1,6 +1,6 @@
 # ♻️ SortIt — AI-Powered Waste Segregation Kiosk
 
-> **SortIt** is an intelligent waste segregation system that leverages **Google Gemini 1.5 Flash Vision** and **n8n workflow automation** to accurately classify waste. Unlike traditional classifiers that label an object as a single item, SortIt identifies **individual physical components** of an object and recommends the correct disposal bin for each component, enabling smarter and more sustainable waste management.
+> **SortIt** is an intelligent waste segregation system that leverages **Google Gemini 2.0 Flash Vision** and **n8n workflow automation** to accurately classify waste. Unlike traditional classifiers that label an object as a single item, SortIt identifies **individual physical components** of an object and recommends the correct disposal bin for each component, enabling smarter and more sustainable waste management.
 
 ---
 
@@ -17,7 +17,7 @@ SortIt addresses this challenge by using AI-powered visual understanding to iden
 # ✨ Features
 
 - 📷 Live camera-based waste scanning
-- 🤖 AI-powered image understanding using Google Gemini 1.5 Flash Vision
+- 🤖 AI-powered image understanding using Google Gemini 2.0 Flash Vision
 - 🧩 Component-level waste decomposition
 - 🎨 Automatic color-coded waste bin assignment
 - ⚡ Real-time waste classification
@@ -117,7 +117,7 @@ Although commonly treated as a single item, a Tetra Pak consists of different ma
         Prepare Gemini Vision Request
                       │
                       ▼
-       Google Gemini 1.5 Flash Vision
+       Google Gemini 2.0 Flash Vision
                       │
                       ▼
       Component & Material Detection
