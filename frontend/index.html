@@ -8,8 +8,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
   
   body {
-    background: #0f172a;
-    color: white;
+    background: #fdf6ee; /* Soft pastel orange-tinted background */
+    color: #4a3b32;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -22,10 +22,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    max-width: 540px;
-    padding: 20px;
+    width: 92%;
+    max-width: 520px;
+    padding: 32px 24px;
     text-align: center;
+    background: #ffffff; /* Clean white card container */
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(220, 150, 100, 0.12);
   }
 
   .brand-header {
@@ -35,8 +38,8 @@
     margin-bottom: 4px;
   }
 
-  h1 { font-size: 2.5rem; font-weight: 800; }
-  .tagline { color: #94a3b8; margin-bottom: 24px; font-size: 1.05rem; }
+  h1 { font-size: 2.5rem; font-weight: 800; color: #3a2b22; }
+  .tagline { color: #8c7365; margin-bottom: 24px; font-size: 1.05rem; }
 
   /* Media / Camera Container */
   .camera-container {
@@ -47,13 +50,13 @@
   }
 
   #video, #canvas {
-    border-radius: 16px;
+    border-radius: 18px;
     width: 100%;
     max-width: 480px;
     height: 320px;
     object-fit: cover;
-    border: 3px solid #334155;
-    background: #1e293b;
+    border: 3px solid #ffedd5;
+    background: #fff7ed;
   }
 
   #canvas { display: none; }
@@ -64,8 +67,8 @@
     padding: 14px 40px;
     font-size: 1.2rem;
     border: none;
-    border-radius: 12px;
-    background: #22c55e;
+    border-radius: 14px;
+    background: #f97316; /* Vibrant pastel orange */
     color: white;
     cursor: pointer;
     font-weight: 700;
@@ -73,21 +76,23 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.25);
   }
 
-  .btn-action:hover { background: #16a34a; }
+  .btn-action:hover { background: #ea580c; }
   .btn-action:active { transform: scale(0.98); }
-  .btn-action:disabled { background: #64748b; cursor: not-allowed; }
+  .btn-action:disabled { background: #fed7aa; cursor: not-allowed; box-shadow: none; color: #9a3412; }
 
   .btn-reset {
-    background: #3b82f6;
+    background: #fb923c;
     margin-top: 24px;
+    box-shadow: 0 4px 14px rgba(251, 146, 60, 0.25);
   }
-  .btn-reset:hover { background: #2563eb; }
+  .btn-reset:hover { background: #f97316; }
 
   /* Loading State */
   .loading {
-    color: #94a3b8;
+    color: #c2410c;
     margin-top: 16px;
     font-size: 1rem;
     font-weight: 600;
@@ -106,30 +111,31 @@
     margin-bottom: 20px;
     text-transform: lowercase;
     letter-spacing: 0.5px;
+    color: #3a2b22;
   }
 
   .component-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #1e293b;
+    background: #fff7ed;
     padding: 16px 20px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 12px;
     text-align: left;
-    border: 1px solid #334155;
+    border: 1px solid #ffedd5;
   }
 
   .part-info strong {
     font-size: 1.05rem;
-    color: #f8fafc;
+    color: #3a2b22;
     display: block;
     margin-bottom: 2px;
     text-transform: capitalize;
   }
 
   .part-info span {
-    color: #94a3b8;
+    color: #78350f;
     font-size: 0.85rem;
   }
 
@@ -144,16 +150,16 @@
 
   /* Color-coded Bin Styles */
   .bin-red { background: #ef4444; color: white; }        /* Hazardous */
-  .bin-yellow { background: #eab308; color: #0f172a; } /* Medical */
+  .bin-yellow { background: #f59e0b; color: white; }    /* Medical */
   .bin-blue { background: #3b82f6; color: white; }       /* Recyclable */
   .bin-green { background: #22c55e; color: white; }      /* Biodegradable */
 
   .error-box {
-    color: #ef4444;
-    background: #1e293b;
+    color: #991b1b;
+    background: #fef2f2;
     padding: 16px;
-    border-radius: 12px;
-    border: 1px solid #7f1d1d;
+    border-radius: 14px;
+    border: 1px solid #fecaca;
     font-size: 0.9rem;
     margin-top: 15px;
     text-align: left;
@@ -269,7 +275,7 @@
     if (!data.components || data.components.length === 0) {
       resultContent.innerHTML = `
         <div class="item-name">${itemName}</div>
-        <p style="color:#94a3b8;">Could not identify distinct parts. Please try again with clear lighting.</p>`;
+        <p style="color:#8c7365;">Could not identify distinct parts. Please try again with clear lighting.</p>`;
       return;
     }
 
@@ -288,16 +294,16 @@
 
       if (rawBin.includes('red') || rawBin.includes('hazard') || rawBin.includes('e-waste')) {
         binClass = 'bin-red';
-        binLabel = 'RED BIN';
+        binLabel = 'RED BIN (HAZARDOUS)';
       } else if (rawBin.includes('yellow') || rawBin.includes('medical') || rawBin.includes('clinical')) {
         binClass = 'bin-yellow';
-        binLabel = 'YELLOW BIN';
+        binLabel = 'YELLOW BIN (MEDICAL)';
       } else if (rawBin.includes('green') || rawBin.includes('bio') || rawBin.includes('organic')) {
         binClass = 'bin-green';
-        binLabel = 'GREEN BIN';
+        binLabel = 'GREEN BIN (BIODEGRADABLE)';
       } else {
         binClass = 'bin-blue';
-        binLabel = 'BLUE BIN';
+        binLabel = 'BLUE BIN (RECYCLABLE)';
       }
 
       html += `
