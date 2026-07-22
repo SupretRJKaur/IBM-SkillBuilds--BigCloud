@@ -1,4 +1,4 @@
-# ♻️ SortIt — AI-Powered Waste Segregation Kiosk
+# ♻️ Sort-It: AI-Powered Waste Segregation Kiosk
 
 > **SortIt** is an intelligent waste segregation system that leverages **Google Gemini 2.0 Flash Vision** and **n8n workflow automation** to accurately classify waste. Unlike traditional classifiers that label an object as a single item, SortIt identifies **individual physical components** of an object and recommends the correct disposal bin for each component, enabling smarter and more sustainable waste management.
 
